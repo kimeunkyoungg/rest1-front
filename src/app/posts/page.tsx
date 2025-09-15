@@ -1,30 +1,25 @@
 "use client";
 
+import { fetchApi } from "@/lib/client";
 import { PostDto } from "@/type/post";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-
   const [posts, setPosts] = useState<PostDto[]>([]);
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL; //env 파일에 있는 변수 가져와서 사용용
-
   useEffect(() => {
-    fetch(`${baseUrl}/api/v1/posts`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setPosts(data);
-      });
+    fetchApi(`/api/v1/posts`).then(setPosts);
   }, []);
 
   return (
+    <>
+    <div className="flex flex-col gap-4">
     <div className="flex flex-col gap-9">
       <h1>글 목록</h1>
       {posts.length === 0 && <div>Loading...</div>}
       {posts.length > 0 && (
-        <ul>
+        <ul>        
           {posts.map((post) => (
             <li key={post.id}>
               <Link href={`/posts/${post.id}`}>
@@ -35,6 +30,11 @@ export default function Home() {
         </ul>
       )}
     </div>
+    <div>
+      <Link href = "/posts/write">새 글 작성</Link>
+    </div>
+    </div>
+    </>
   );
 }
 //글 목록은 2번 렌더링 된다
